@@ -1,0 +1,253 @@
+﻿@using Ae.Poc.Identity.Ui.Services
+@using Ae.Poc.Identity.Ui.UiData
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+@using System.Security.Claims
+@inject NavigationManager NavigationManager
+@inject IIdentityStorageClient identityStorageClient
+
+<div>
+    <div>
+        <p style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
+            @if (IsNewClaim)
+            {
+                <h3 style="margin-right: auto;">New Claim</h3>
+            }
+            else
+            {
+                <h3 style="margin-right: auto;">Claim</h3>
+            }
+            <button onclick="@(()=>NavigateToClaims())" class="btn btn-secondary">Cancel</button>
+            <button onclick="@(()=>HandleOnClickSaveClaim())" form="EditFormClaimDetails" class="btn btn-primary" type="submit">Save</button>
+        </p>
+    </div>
+
+    @if (ClaimUiItem == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <EditForm id="EditFormClaimDetails" Model="@ClaimUiItem" OnValidSubmit="@(async (EditContext editContext)=> await HandleValidSubmit(editContext))">
+            <DataAnnotationsValidator />
+            @* <ValidationSummary /> *@
+            <div class="form-group row" style="margin-bottom: 15px;">
+                <label for="claimText" class="col-sm-2 col-form-label">
+                    Text
+                </label>
+                <div class="col-sm-9">
+                    <InputText id="claimText" class="form-control" placeholder="Claim Display Text" @bind-Value="ClaimUiItem.DisplayText" />
+                    <ValidationMessage For=@(() => ClaimUiItem.DisplayText) />
+                </div>
+            </div>
+
+            <div class="form-group row" style="margin-bottom: 15px;">
+                <label for="claimType" class="col-sm-2 col-form-label">
+                    Type
+                </label>
+                <div class="col-sm-9">
+                    @if (IsNewClaim)
+                    {
+                        <InputText id="claimType" class="form-control" placeholder="Claim Type" @bind-Value="ClaimUiItem.Type" />
+                        <ValidationMessage For="@(() => ClaimUiItem.Type)" />
+                    }
+                    else
+                    {
+                        <InputText id="claimType" class="form-control" placeholder="Claim Type" @bind-Value="ClaimUiItem.Type" readonly style="pointer-events: none; background-color: #f8f9fa;" />
+                    }
+                </div>
+            </div>
+
+            <div class="form-group row" style="margin-bottom: 15px;">
+                <label for="claimValue" class="col-sm-2 col-form-label">
+                    Value
+                </label>
+                <div class="col-sm-9">
+                    <InputText id="claimValue" class="form-control" placeholder="Claim Value" @bind-Value="ClaimUiItem.Value" />
+                    <ValidationMessage For="@(() => ClaimUiItem.Value)" />
+                </div>
+            </div>
+
+            <div class="form-group row" style="margin-bottom: 15px;">
+                <label for="claimValueType" class="col-sm-2 col-form-label">
+                    Value Type
+                </label>
+                <div class="col-sm-9">
+                    @if (IsNewClaim)
+                    {
+                        <InputSelect id="claimValueType" class="form-control" @bind-Value="ClaimUiItem.ValueType">
+                            @foreach (var valtype in ValueTypes)
+                            {
+                                <option value="@valtype">@valtype</option>
+                            }
+                        </InputSelect>
+                    }
+                    else
+                    {
+                        <InputText id="claimType" class="form-control" placeholder="Claim Type" @bind-Value="ClaimUiItem.ValueType" readonly style="pointer-events: none; background-color: #f8f9fa;" />
+                    }
+                </div>
+            </div>
+
+            <div class="form-group row" style="margin-bottom: 15px;">
+                <label for="claimProperties" class="col-sm-2 col-form-label">
+                    Properties
+                </label>
+                <div class="col-sm-7">
+                    <p style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
+                        <InputText id="claimPropertyKey" class="form-control" placeholder="Property Key" @bind-Value="ClaimPropertyKey" />
+                        <InputText id="claimPropertyValue" class="form-control" placeholder="Property Value" @bind-Value="ClaimPropertyValue" />
+                        <button onclick="@(()=>AppendClaimProperty())" class="btn btn-success"> + </button>
+                        <button onclick="@(()=>DeleteLastClaimProperty())" class="btn btn-success" disabled="@HasNotProperties"> - </button>
+                    </p>
+
+                    @if (ClaimUiItem.Properties != null && ClaimUiItem.Properties.Any())
+                    {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Key</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var property in ClaimUiItem.Properties)
+                                {
+                                    <tr>
+                                        <td>@property.Key</td>
+                                        <td>@property.Value</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p>No properties available.</p>
+                    }
+                </div>
+            </div>
+
+            <div class="form-group row" style="margin-bottom: 15px;">
+                <label for="claimDescription" class="col-sm-2 col-form-label">
+                    Description
+                </label>
+                <div class="col-sm-9">
+                    <InputTextArea id="claimDescription" class="form-control" placeholder="Claim Description" @bind-Value="ClaimUiItem.Description" style="min-height: 100px;" />
+                </div>
+            </div>
+        </EditForm>
+
+        <div class="form-group row" style="margin-bottom: 15px;">
+            <label for="deleteClaim" class="col-sm-2 col-form-label">
+            </label>
+            <div class="col-sm-9">
+                @if (!IsNewClaim)
+                {
+                    <button onclick="@(async ()=> await DeleteClaimAsync())" class="btn btn-danger" disabled="@IsNewClaim">Delete</button>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+
+@code {
+
+    [Parameter]
+    public string Id { get; set; } = default!;
+
+    private AppClaimUiItem ClaimUiItem { get; set; } = new AppClaimUiItem() { ValueType = ClaimValueTypes.String };
+
+    public bool IsNewClaim => Id is null;
+
+    private static readonly string[] ValueTypes = new[]
+    {
+        ClaimValueTypes.String,
+        ClaimValueTypes.Boolean,
+        ClaimValueTypes.Integer,
+        ClaimValueTypes.Double,
+        ClaimValueTypes.Date
+    };
+
+    private bool HasNotProperties => ClaimUiItem.Properties is null || !ClaimUiItem.Properties.Any();
+
+    private string ClaimPropertyKey { get; set; } = string.Empty;
+    private string ClaimPropertyValue { get; set; } = string.Empty;
+
+    private bool SaveClaimButtonClicked { get; set; } = false;
+
+    private async Task LoadData(string claimId)
+        => ClaimUiItem = await identityStorageClient.LoadClaimDetailsAsync(claimId);
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsNewClaim)
+        {
+            return;
+        }
+
+        await LoadData(Id);
+    }
+
+    protected async Task HandleValidSubmit(EditContext editContext)
+    {
+        if (SaveClaimButtonClicked)
+        {
+            if (IsNewClaim)
+            {
+                await identityStorageClient.CreateClaimAsync(ClaimUiItem);
+            }
+            else
+            {
+                await identityStorageClient.UpdateClaimAsync(Id, ClaimUiItem);
+            }
+            NavigateToClaims();
+        }
+    }
+
+    private void NavigateToClaims()
+    {
+        NavigationManager.NavigateTo("/appclaims");
+    }
+
+    private void HandleOnClickSaveClaim()
+    {
+        SaveClaimButtonClicked = true;
+    }
+
+    private async Task DeleteClaimAsync()
+    {
+        if (!IsNewClaim)
+        {
+            await identityStorageClient.DeleteClaimAsync(Id);
+        }
+
+        NavigateToClaims();
+    }
+
+    private void AppendClaimProperty()
+    {
+        System.Diagnostics.Debug.WriteLine($"*** AppendClaimProperty *************************************************************************");
+
+        if (ClaimUiItem.Properties == null)
+        {
+            ClaimUiItem.Properties = new Dictionary<string, string>();
+        }
+        string key = string.IsNullOrWhiteSpace(ClaimPropertyKey) ? $"Key-{ClaimUiItem.Properties.Count + 1}" : ClaimPropertyKey;
+        string val = string.IsNullOrWhiteSpace(ClaimPropertyValue) ? $"Value-{ClaimUiItem.Properties.Count + 1}" : ClaimPropertyValue;
+
+        ClaimUiItem.Properties[key] = val;
+    }
+
+    private void DeleteLastClaimProperty()
+    {
+        if (ClaimUiItem.Properties != null && ClaimUiItem.Properties.Any())
+        {
+            ClaimUiItem.Properties.Remove(ClaimUiItem.Properties.Last().Key);
+            ClaimPropertyKey = string.Empty;
+            ClaimPropertyValue = string.Empty;
+        }
+    }
+
+}
