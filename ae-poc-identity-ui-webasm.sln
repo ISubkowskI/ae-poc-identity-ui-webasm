@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ae-poc-identity-ui-lib", "a
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ae-poc-identity-ui-components", "ae-poc-identity-ui-components\ae-poc-identity-ui-components.csproj", "{58D8B239-32AC-8716-1CD8-C2BF6278F737}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ae-poc-identity-ui-webasm", "ae-poc-identity-ui-webasm\ae-poc-identity-ui-webasm.csproj", "{50D41215-4D6F-4061-990E-A809DF128F49}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{58D8B239-32AC-8716-1CD8-C2BF6278F737}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58D8B239-32AC-8716-1CD8-C2BF6278F737}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58D8B239-32AC-8716-1CD8-C2BF6278F737}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50D41215-4D6F-4061-990E-A809DF128F49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50D41215-4D6F-4061-990E-A809DF128F49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50D41215-4D6F-4061-990E-A809DF128F49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50D41215-4D6F-4061-990E-A809DF128F49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

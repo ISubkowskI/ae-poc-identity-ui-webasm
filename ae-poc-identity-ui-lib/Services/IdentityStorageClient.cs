@@ -33,7 +33,7 @@ public sealed class IdentityStorageClient : IIdentityStorageClient
 
     public async Task<IEnumerable<AppAccountUiItem>> LoadAccountsAsync(CancellationToken ct = default)
     {
-        //const string link = "http://localhost:5023/api/v1/accounts";
+        //const string link = "http://localhost:5023/api/v2/accounts";
         const string ApiEndPoint = "accounts";
         _logger.LogInformation("Start {MethodName} ...", nameof(LoadAccountsAsync));
         try
@@ -55,7 +55,7 @@ public sealed class IdentityStorageClient : IIdentityStorageClient
 
     public async Task<IEnumerable<AppClaimUiItem>> LoadClaimsAsync(CancellationToken ct = default)
     {
-        //const string link = "http://localhost:5023/api/v1/masterdata/claims";
+        //const string link = "http://localhost:5023/api/v2/masterdata/claims";
         const string ApiEndPoint = "masterdata/claims";
 
         _logger.LogInformation("Start {MethodName} ...", nameof(LoadClaimsAsync));
@@ -76,7 +76,7 @@ public sealed class IdentityStorageClient : IIdentityStorageClient
 
     public async Task<AppClaimUiItem> LoadClaimDetailsAsync(string claimId, CancellationToken ct = default)
     {
-        //const string link = "http://localhost:5023/api/v1/masterdata/claims/{claimId}";
+        //const string link = "http://localhost:5023/api/v2/masterdata/claims/{claimId}";
         const string ApiEndPoint = "masterdata/claims";
         _logger.LogInformation("Start {MethodName} ...", nameof(LoadClaimDetailsAsync));
 

@@ -1,0 +1,11 @@
+﻿@page "/appclaimdetails/{claimid?}"
+@using Ae.Poc.Identity.Ui.Components.IdentityStorage.Pages
+
+<PageTitle>Claim Details</PageTitle>
+
+<AppClaimDetailsComponent Id="@ClaimId" />
+
+@code {
+    [Parameter] 
+    public string? ClaimId { get; set; } = default!;
+}
