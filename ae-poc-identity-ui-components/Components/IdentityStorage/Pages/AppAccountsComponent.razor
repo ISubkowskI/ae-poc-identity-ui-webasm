@@ -1,0 +1,49 @@
+﻿@using Ae.Poc.Identity.Ui.Services
+@using Ae.Poc.Identity.Ui.UiData
+@inject IIdentityStorageClient identityStorageClient
+
+<div>
+    <h3>Application Accounts</h3>
+
+    @if (appAccountUiItems == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Display Name</th>
+                    <th>Email</th>
+                    <th>Description</th>
+                    <th>IsLocked</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in appAccountUiItems)
+                {
+                    <tr>
+                        <td>@item.DisplayName</td>
+                        <td>@item.EmailAddress</td>
+                        <td>@item.Description</td>
+                        <td>@item.IsLocked</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+
+@code {
+    private AppAccountUiItem[]? appAccountUiItems;
+
+    private async Task LoadData()
+        => appAccountUiItems = (await identityStorageClient.LoadAccountsAsync()).ToArray();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+}

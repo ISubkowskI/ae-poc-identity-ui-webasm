@@ -1,0 +1,54 @@
+﻿@using Ae.Poc.Identity.Ui.Services
+@using Ae.Poc.Identity.Ui.UiData
+@inject IIdentityStorageClient identityStorageClient
+
+<div>
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;">
+        <h3 style="margin-right: auto;">Application Claims</h3>
+        <a href="appclaimdetails" class="btn btn-success" style="display: inline-block;">New</a>
+    </div>
+
+    @if (appClaimUiItems == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Text</th>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Value Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in appClaimUiItems)
+                {
+                    <tr>
+                        <td><a href="appclaimdetails/@item.Id" class="btn-link">Modify</a></td>
+                        <td>@item.DisplayText</td>
+                        <td>@item.Type</td>
+                        <td>@item.Value</td>
+                        <td>@item.ValueType</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+
+@code {
+    private AppClaimUiItem[]? appClaimUiItems;
+
+    private async Task LoadData()
+        => appClaimUiItems = (await identityStorageClient.LoadClaimsAsync()).ToArray();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+}
