@@ -19,7 +19,6 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services
   .AddAppConfiguration(builder.Configuration)
-  .AddAppMapper()
   .AddAppServices();
 
 var app = builder.Build();

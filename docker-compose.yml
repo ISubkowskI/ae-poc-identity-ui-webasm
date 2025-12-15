@@ -1,6 +1,6 @@
 services:
   identity-ui:
-    image: identity-ui
+    image: identity-ui-webasm
     container_name: ae-poc-identity-ui-webasm
     build:
       context: .

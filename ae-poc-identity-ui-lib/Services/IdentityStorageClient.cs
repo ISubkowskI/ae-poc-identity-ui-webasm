@@ -1,10 +1,10 @@
-﻿using AutoMapper;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using Ae.Poc.Identity.Ui.Dtos;
 using Ae.Poc.Identity.Ui.UiData;
 using Ae.Poc.Identity.Ui.Settings;
+using Ae.Poc.Identity.Ui.Extensions;
 
 namespace Ae.Poc.Identity.Ui.Services;
 
@@ -12,39 +12,30 @@ public sealed class IdentityStorageClient : IIdentityStorageClient
 {
     private readonly ILogger<IdentityStorageClient> _logger;
     private readonly HttpClient _httpClient;
-    private readonly IMapper _mapper;
     private readonly IdentityStorageApiOptions _apiOptions;
 
     public IdentityStorageClient(
         ILogger<IdentityStorageClient> logger,
         IOptions<IdentityStorageApiOptions> identityStorageApiOptions,
-        HttpClient httpClient,
-        IMapper mapper)
+        HttpClient httpClient)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _apiOptions = identityStorageApiOptions?.Value ?? throw new ArgumentNullException(nameof(identityStorageApiOptions));
 
         _httpClient.BaseAddress = new Uri(_apiOptions.ApiUrl);
-        //_httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //_httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/json"));
     }
 
     public async Task<IEnumerable<AppAccountUiItem>> LoadAccountsAsync(CancellationToken ct = default)
     {
-        //const string link = "http://localhost:5023/api/v2/accounts";
         const string ApiEndPoint = "accounts";
         _logger.LogInformation("Start {MethodName} ...", nameof(LoadAccountsAsync));
         try
         {
             string requestUri = Flurl.Url.Combine(_apiOptions.ApiUrl, _apiOptions.ApiBasePath, ApiEndPoint);
-            //var str = await _httpClient.GetStringAsync(requestUri, ct);
-            //return [];
 
             var res = await _httpClient.GetFromJsonAsync<IEnumerable<AppAccountDto>>(requestUri: requestUri, cancellationToken: ct);
-            var outData = _mapper.Map<IEnumerable<AppAccountUiItem>>(res);
-            return outData;
+            return res.ToUiItems();
         }
         catch (Exception e)
         {
@@ -55,7 +46,6 @@ public sealed class IdentityStorageClient : IIdentityStorageClient
 
     public async Task<IEnumerable<AppClaimUiItem>> LoadClaimsAsync(CancellationToken ct = default)
     {
-        //const string link = "http://localhost:5023/api/v2/masterdata/claims";
         const string ApiEndPoint = "masterdata/claims";
 
         _logger.LogInformation("Start {MethodName} ...", nameof(LoadClaimsAsync));
@@ -64,8 +54,7 @@ public sealed class IdentityStorageClient : IIdentityStorageClient
         {
             string requestUri = Flurl.Url.Combine(_apiOptions.ApiBasePath, ApiEndPoint);
             var res = await _httpClient.GetFromJsonAsync<IEnumerable<AppClaimDto>>(requestUri: requestUri, cancellationToken: ct);
-            var resData = _mapper.Map<IEnumerable<AppClaimUiItem>>(res);
-            return resData;
+            return res.ToUiItems();
         }
         catch (Exception e)
         {
@@ -76,7 +65,6 @@ public sealed class IdentityStorageClient : IIdentityStorageClient
 
     public async Task<AppClaimUiItem> LoadClaimDetailsAsync(string claimId, CancellationToken ct = default)
     {
-        //const string link = "http://localhost:5023/api/v2/masterdata/claims/{claimId}";
         const string ApiEndPoint = "masterdata/claims";
         _logger.LogInformation("Start {MethodName} ...", nameof(LoadClaimDetailsAsync));
 
@@ -84,8 +72,7 @@ public sealed class IdentityStorageClient : IIdentityStorageClient
         {
             string requestUri = Flurl.Url.Combine(_apiOptions.ApiBasePath, ApiEndPoint, claimId);
             var res = await _httpClient.GetFromJsonAsync<AppClaimDto>(requestUri: requestUri, cancellationToken: ct);
-            var resData = _mapper.Map<AppClaimUiItem>(res);
-            return resData;
+            return res.ToUiItem();
         }
         catch (Exception e)
         {
@@ -105,8 +92,7 @@ public sealed class IdentityStorageClient : IIdentityStorageClient
             if (httpResponse.IsSuccessStatusCode)
             {
                 var res = await httpResponse.Content.ReadFromJsonAsync<AppClaimDto>(cancellationToken: ct);
-                var resData = _mapper.Map<AppClaimUiItem>(res);
-                return resData;
+                return res.ToUiItem();
             }
             else
             {
@@ -129,13 +115,12 @@ public sealed class IdentityStorageClient : IIdentityStorageClient
         try
         {
             string requestUri = Flurl.Url.Combine(_apiOptions.ApiBasePath, ApiEndPoint);
-            var requestData = _mapper.Map<AppClaimDto>(appClaimUiItem);
+            var requestData = appClaimUiItem.ToDto();
             var httpResponse = await _httpClient.PostAsJsonAsync(requestUri: requestUri, value: requestData, cancellationToken: ct);
             if (httpResponse.IsSuccessStatusCode)
             {
                 var res = await httpResponse.Content.ReadFromJsonAsync<AppClaimDto>(cancellationToken: ct);
-                var resData = _mapper.Map<AppClaimUiItem>(res);
-                return resData;
+                return res.ToUiItem();
             }
             else
             {
@@ -157,13 +142,12 @@ public sealed class IdentityStorageClient : IIdentityStorageClient
         try
         {
             string requestUri = Flurl.Url.Combine(_apiOptions.ApiBasePath, ApiEndPoint, claimId);
-            var requestData = _mapper.Map<AppClaimDto>(appClaimUiItem);
+            var requestData = appClaimUiItem.ToDto();
             var httpResponse = await _httpClient.PatchAsJsonAsync(requestUri: requestUri, value: requestData, cancellationToken: ct);
             if (httpResponse.IsSuccessStatusCode)
             {
                 var res = await httpResponse.Content.ReadFromJsonAsync<AppClaimDto>(cancellationToken: ct);
-                var resData = _mapper.Map<AppClaimUiItem>(res);
-                return resData;
+                return res.ToUiItem();
             }
             else
             {
