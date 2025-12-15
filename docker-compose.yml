@@ -1,10 +1,10 @@
+name: ae-poc-identity
 services:
-  identity-ui:
-    image: identity-ui-webasm
+  identity-ui-webasm:
+    image: identity-ui-webasm:v1.0.3
     container_name: ae-poc-identity-ui-webasm
     build:
       context: .
       dockerfile: ae-poc-identity-ui-webasm/Dockerfile
     ports:
       - "8080:80"
-    restart: always
