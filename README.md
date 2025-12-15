@@ -68,6 +68,23 @@ A class library containing shared logic, services, and models.
    ```
    The application will typically start at `http://localhost:5278` (or the port defined in `launchSettings.json`).
 
+   The application will typically start at `http://localhost:5278` (or the port defined in `launchSettings.json`).
+
+### Running with Docker
+
+1. **Build and Run**:
+   ```bash
+   docker compose up -d --build
+   ```
+
+2. **Access the application**:
+   Open [http://localhost:8080](http://localhost:8080) in your browser.
+
+3. **Stop the container**:
+   ```bash
+   docker compose down
+   ```
+
 ## ⚙️ Configuration
 
 The application is configured via `wwwroot/appsettings.json`.
