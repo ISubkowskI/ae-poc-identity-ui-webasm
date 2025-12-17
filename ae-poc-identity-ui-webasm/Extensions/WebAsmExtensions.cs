@@ -13,7 +13,6 @@ public static class WebAsmExtensions
 
         services
             .Configure<AppOptions>(config.GetSection(AppOptions.App))
-            .Configure<IdentityStorageApiOptions>(config.GetSection(IdentityStorageApiOptions.IdentityStorageApi))
             .Configure<IdentityApiOptions>(config.GetSection(IdentityApiOptions.IdentityApi));
 
         return services;

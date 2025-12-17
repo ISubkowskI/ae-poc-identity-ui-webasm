@@ -12,11 +12,11 @@ public sealed class IdentityStorageClient : IIdentityStorageClient
 {
     private readonly ILogger<IdentityStorageClient> _logger;
     private readonly HttpClient _httpClient;
-    private readonly IdentityStorageApiOptions _apiOptions;
+    private readonly IdentityApiOptions _apiOptions;
 
     public IdentityStorageClient(
         ILogger<IdentityStorageClient> logger,
-        IOptions<IdentityStorageApiOptions> identityStorageApiOptions,
+        IOptions<IdentityApiOptions> identityStorageApiOptions,
         HttpClient httpClient)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
