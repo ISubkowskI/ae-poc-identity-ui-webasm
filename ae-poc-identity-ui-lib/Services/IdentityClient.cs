@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Ae.Poc.Identity.Ui.Settings;
+using Ae.Poc.Identity.Ui.Exceptions;
 using Ae.Poc.Identity.Ui.Dtos;
 using Ae.Poc.Identity.Ui.Extensions;
 using Ae.Poc.Identity.Ui.UiData;
@@ -34,6 +35,11 @@ public sealed class IdentityClient : IIdentityClient
 
             var res = await _httpClient.GetFromJsonAsync<IEnumerable<AppAccountDto>>(requestUri: requestUri, cancellationToken: ct);
             return res.ToUiItems();
+        }
+        catch (HttpRequestException e)
+        {
+            _logger.LogError(e, "Error in {MethodName} ...", nameof(LoadAccountsAsync));
+            throw new IdentityApiException($"Failed to load accounts: {e.Message}", e);
         }
         catch (Exception e)
         {

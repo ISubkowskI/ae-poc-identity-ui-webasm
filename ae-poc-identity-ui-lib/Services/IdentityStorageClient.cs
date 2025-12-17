@@ -37,6 +37,11 @@ public sealed class IdentityStorageClient : IIdentityStorageClient
             var res = await _httpClient.GetFromJsonAsync<IEnumerable<AppClaimDto>>(requestUri: requestUri, cancellationToken: ct);
             return res.ToUiItems();
         }
+        catch (HttpRequestException e)
+        {
+            _logger.LogError(e, "Error in {MethodName} ...", nameof(LoadClaimsAsync));
+            throw new IdentityApiException($"Failed to load claims: {e.Message}", e);
+        }
         catch (Exception e)
         {
             _logger.LogError(e, "Error in {MethodName} ...", nameof(LoadClaimsAsync));
@@ -54,6 +59,11 @@ public sealed class IdentityStorageClient : IIdentityStorageClient
             string requestUri = Flurl.Url.Combine(_apiOptions.ApiBasePath, IdentityApiEndpoints.MasterDataClaims, claimId);
             var res = await _httpClient.GetFromJsonAsync<AppClaimDto>(requestUri: requestUri, cancellationToken: ct);
             return res.ToUiItem();
+        }
+        catch (HttpRequestException e)
+        {
+            _logger.LogError(e, "Error in {MethodName} ...", nameof(LoadClaimDetailsAsync));
+            throw new IdentityApiException($"Failed to load claim details: {e.Message}", e);
         }
         catch (Exception e)
         {
