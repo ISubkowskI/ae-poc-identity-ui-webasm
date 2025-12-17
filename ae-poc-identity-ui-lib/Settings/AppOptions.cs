@@ -6,7 +6,6 @@ public sealed class AppOptions
 
     public string Title { get; set; } = String.Empty;
     public string Version { get; set; } = String.Empty;
-    //public string BaseUrl { get; set; } = String.Empty;
     public string ClientId { get; set; } = String.Empty;
 
 }

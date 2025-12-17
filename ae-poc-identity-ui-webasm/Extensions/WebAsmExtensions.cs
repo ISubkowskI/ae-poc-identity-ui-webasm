@@ -1,6 +1,5 @@
 ﻿using Ae.Poc.Identity.Ui.Services;
 using Ae.Poc.Identity.Ui.Settings;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace Ae.Poc.Identity.Ui.Extensions;
