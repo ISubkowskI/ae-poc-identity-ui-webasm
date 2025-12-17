@@ -36,7 +36,7 @@ A Razor Class Library (RCL) containing reusable UI components.
 ### 3. `ae-poc-identity-ui-lib`
 A class library containing shared logic, services, and models.
 - **Key Folders**:
-  - `Services`: Contains `IdentityStorageClient` for API communication.
+  - `Services`: Contains `IdentityClient` and `IdentityStorageClient` for API communication.
   - `Dtos`: Data Transfer Objects for API contracts.
   - `UiData`: View models used by the UI components.
   - `Extensions`: Contains `MapperExtensions.cs` for manual DTO mapping.
@@ -99,10 +99,6 @@ The application is configured via `wwwroot/appsettings.json`.
     "Version": "1.0.1",
     "ClientId": "ae-poc-identity-ui-webasm"
   },
-  "IdentityStorageApi": {
-    "ApiUrl": "http://localhost:5023",
-    "ApiBasePath": "/api/v2"
-  },
   "IdentityApi": {
     "ApiUrl": "http://localhost:5023",
     "ApiBasePath": "/api/v2"
@@ -111,8 +107,8 @@ The application is configured via `wwwroot/appsettings.json`.
 ```
 
 ### Key Settings
-- **IdentityStorageApi**:
-  - `ApiUrl`: The base URL of the backend Identity API (e.g., `http://localhost:5023`). A matching container or local service must be running at this address.
+- **IdentityApi**:
+  - `ApiUrl`: The base URL of the backend Identity API (e.g., `http://localhost:5023`).
   - `ApiBasePath`: The versioned path prefix (e.g., `/api/v2`).
 
 ## ⚠️ Important Notes
