@@ -1,6 +1,6 @@
 ﻿@using Ae.Poc.Identity.Ui.Services
 @using Ae.Poc.Identity.Ui.UiData
-@inject IIdentityStorageClient identityStorageClient
+@inject IIdentityClient identityClient
 
 <div>
     <h3>Application Accounts</h3>
@@ -40,7 +40,7 @@
     private AppAccountUiItem[]? appAccountUiItems;
 
     private async Task LoadData()
-        => appAccountUiItems = (await identityStorageClient.LoadAccountsAsync()).ToArray();
+        => appAccountUiItems = (await identityClient.LoadAccountsAsync()).ToArray();
 
     protected override async Task OnInitializedAsync()
     {

@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-
-namespace Ae.Poc.Identity.Ui.Dtos;
+﻿namespace Ae.Poc.Identity.Ui.Dtos;
 
 public sealed record AppAccountDto
 {

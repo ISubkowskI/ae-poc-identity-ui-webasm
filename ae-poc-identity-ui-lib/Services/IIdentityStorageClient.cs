@@ -4,7 +4,6 @@ namespace Ae.Poc.Identity.Ui.Services;
 
 public interface IIdentityStorageClient
 {
-    Task<IEnumerable<AppAccountUiItem>> LoadAccountsAsync(CancellationToken ct = default);
 
     Task<IEnumerable<AppClaimUiItem>> LoadClaimsAsync(CancellationToken ct = default);
 

@@ -1,5 +1,6 @@
 ﻿using Ae.Poc.Identity.Ui.Services;
 using Ae.Poc.Identity.Ui.Settings;
+using Microsoft.Extensions.Options;
 
 namespace Ae.Poc.Identity.Ui.Extensions;
 
@@ -13,7 +14,6 @@ public static class WebAsmExtensions
 
         services
             .Configure<AppOptions>(config.GetSection(AppOptions.App))
-            .Configure<IdentityStorageApiOptions>(config.GetSection(IdentityStorageApiOptions.IdentityStorageApi))
             .Configure<IdentityApiOptions>(config.GetSection(IdentityApiOptions.IdentityApi));
 
         return services;
@@ -23,9 +23,18 @@ public static class WebAsmExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services.AddHttpClient<IIdentityStorageClient, IdentityStorageClient>();
-        services.AddHttpClient<IIdentityClient, IdentityClient>();
+        services.AddHttpClient<IIdentityStorageClient, IdentityStorageClient>(ConfigureIdentityClient);
+        services.AddHttpClient<IIdentityClient, IdentityClient>(ConfigureIdentityClient);
 
         return services;
+
+        static void ConfigureIdentityClient(IServiceProvider sp, HttpClient client)
+        {
+            var options = sp.GetRequiredService<IOptions<IdentityApiOptions>>().Value;
+            if (!string.IsNullOrEmpty(options.ApiUrl))
+            {
+                client.BaseAddress = new Uri(options.ApiUrl);
+            }
+        }
     }
 }
