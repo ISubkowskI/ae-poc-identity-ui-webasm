@@ -1,7 +1,7 @@
 name: ae-poc-identity
 services:
   identity-ui-webasm:
-    image: identity-ui-webasm:v1.0.4
+    image: identity-ui-webasm:v1.0.5
     container_name: ae-poc-identity-ui-webasm
     build:
       context: .
